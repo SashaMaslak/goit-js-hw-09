@@ -1,6 +1,24 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
+refs = {
+   startBtn: document.querySelector('[data-start]'),
+   stopBtn: document.querySelector('[data-stop]'),
+   clearBtn: document.querySelector('[data-clear]'),
+   days: document.querySelector('[data-days]'),
+   hours: document.querySelector('[data-hours]'),
+   minutes: document.querySelector('[data-minutes]'),
+   seconds: document.querySelector('[data-seconds]'),
+   timer: document.querySelector('.timer')
+};
+refs.startBtn.setAttribute("disabled", "disabled");
+
+
+let startTime = 0;
+let currentMs = 0;
+let currentTime = 0;
+let setIntervalTimer = null;
 
 const options = {
   enableTime: true,
@@ -8,66 +26,49 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
-    selectedData = selectedDates[0];
-    if (selectedData < new Date()) {
-      Notiflix.Notify.failure('Please choose a date in the future', {
-        width: '350px',
-        height: '400px',
-        position: 'right-top',
-        clickToClose: true,
-        distance: '20px',
-        fontSize: '16px',
-      });
-      addDisabledAtr(refs.startBtn);
-    } else {
-      removeDisabledAtr(refs.startBtn);
-    }
+     if (selectedDates[0] < Date.now()) {
+        Notify.failure('Please choose a date in the future', {
+            ID: 'MKA',
+            timeout: 1923,
+            width: '380px',
+            position: 'center-top',
+});
+     }
+     else {
+        refs.startBtn.removeAttribute("disabled");
+        startTime = selectedDates[0];
+        
+        
+     }
   },
 };
 flatpickr('#datetime-picker', options);
 
-let selectedData = '';
-
-const refs = {
-  startBtn: document.querySelector('[data-start]'),
-  days: document.querySelector('[data-days]'),
-  hours: document.querySelector('[data-hours]'),
-  minutes: document.querySelector('[data-minutes]'),
-  seconds: document.querySelector('[data-seconds]'),
+const timer = {
+   start() {
+      setIntervalTimer = setInterval(() => {
+         refs.startBtn.setAttribute("disabled", "disabled");
+         currentTime = Date.now();
+         currentMs = startTime - currentTime;
+         renderTimer();
+         refs.timer.style.color = 'red';
+      }, 1000);
+      return setIntervalTimer;
+   },
 };
 
-addDisabledAtr(refs.startBtn);
-
-refs.startBtn.addEventListener('click', onClickStartTimer);
-
-function onClickStartTimer() {
-  setInterval(() => {
-    const currentData = new Date();
-    const timerData = selectedData - currentData;
-    if (timerData <= 0) {
-      refs.days.textContent = '00';
-      refs.hours.textContent = '00';
-      refs.minutes.textContent = '00';
-      refs.seconds.textContent = '00';
-      return;
-    }
-    const formatedData = convertMs(timerData);
-    console.log(formatedData);
-    runTimer(formatedData);
-  }, 1000);
-}
-
-function runTimer(data) {
-  refs.days.textContent = addLeadingZero(data.days);
-  refs.hours.textContent = addLeadingZero(data.hours);
-  refs.minutes.textContent = addLeadingZero(data.minutes);
-  refs.seconds.textContent = addLeadingZero(data.seconds);
-}
+refs.startBtn.addEventListener('click', timer.start);
 
 function addLeadingZero(value) {
-  return value.toString().padStart(2, 0);
+   return String(value).padStart(2, '0');
 }
+
+function renderTimer() {
+   addLeadingZero(refs.days.textContent = addLeadingZero(convertMs(currentMs).days));
+   addLeadingZero(refs.hours.textContent = addLeadingZero(convertMs(currentMs).hours));
+   addLeadingZero(refs.minutes.textContent = addLeadingZero(convertMs(currentMs).minutes));
+   addLeadingZero(refs.seconds.textContent = addLeadingZero(convertMs(currentMs).seconds));
+};
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -88,10 +89,6 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-function addDisabledAtr(linkOnBtn) {
-  linkOnBtn.setAttribute('disabled', 'disabled');
-}
 
-function removeDisabledAtr(linkOnBtn) {
-  linkOnBtn.removeAttribute('disabled', 'disabled');
-}
+
+
