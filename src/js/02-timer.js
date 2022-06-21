@@ -6,6 +6,7 @@ const refs = {
    startBtn: document.querySelector('[data-start]'),
    stopBtn: document.querySelector('[data-stop]'),
    clearBtn: document.querySelector('[data-clear]'),
+   inputDate: document.querySelector('#datetime-picker'),
    days: document.querySelector('[data-days]'),
    hours: document.querySelector('[data-hours]'),
    minutes: document.querySelector('[data-minutes]'),
@@ -13,6 +14,8 @@ const refs = {
    timer: document.querySelector('.timer')
 };
 refs.startBtn.setAttribute("disabled", "disabled");
+
+
 
 
 let startTime = 0;
@@ -52,7 +55,16 @@ const timer = {
          currentMs = startTime - currentTime;
          renderTimer();
          refs.timer.style.color = 'red';
+         console.log(currentMs <= 0);
+         refs.inputDate.setAttribute("disabled", "disabled");
+         
+         if (currentMs < 1000) {
+         refs.inputDate.removeAttribute("disabled");
+         refs.startBtn.removeAttribute("disabled");
+         return clearInterval(setIntervalTimer);
+      }
       }, 1000);
+      
       return setIntervalTimer;
    },
 };

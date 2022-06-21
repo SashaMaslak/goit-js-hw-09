@@ -41,7 +41,7 @@ function onSubmitForm(e) {
     return;
   }
 
-   let sumDelaySteps = parseInt(firstDelay) - parseInt(delayStep);
+  let sumDelaySteps = parseInt(firstDelay) - parseInt(delayStep);
 
   for (let i = 0; i < amount; i++) {
     sumDelaySteps += parseInt(delayStep);
@@ -71,6 +71,8 @@ function onSubmitForm(e) {
             fontSize: '16px',
           }
         );
-      });
-  }
-}
+      }); 
+  };
+  console.log(refs.form);
+  refs.form.reset();
+};
