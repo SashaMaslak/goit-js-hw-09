@@ -73,6 +73,5 @@ function onSubmitForm(e) {
         );
       }); 
   };
-  console.log(refs.form);
   refs.form.reset();
 };
