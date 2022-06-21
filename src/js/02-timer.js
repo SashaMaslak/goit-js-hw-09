@@ -55,7 +55,6 @@ const timer = {
          currentMs = startTime - currentTime;
          renderTimer();
          refs.timer.style.color = 'red';
-         console.log(currentMs <= 0);
          refs.inputDate.setAttribute("disabled", "disabled");
          
          if (currentMs < 1000) {
